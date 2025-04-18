@@ -7,9 +7,9 @@ Architecture use:
 1. etherv6js (shorter code and easier)
 2. hardhat 2.23 (foundry is harder to use, remix is just too manual)
 3. solidity 0.8.28
-
+<pre>
 Steps 1:
-#install dependencies as denoted in package.json/n
+#install dependencies as denoted in package.json
 npm i
 
 Step 2 Option 1
@@ -39,12 +39,9 @@ Step 3
 #put the address in frontend from the output of step 2
 Files to edit:
 frontend/src/constant/index.js
-export const NFTAddress =
-  "";
-export const  MarketplaceAddress=
-  "";
-export const DAOAddress =
-  "";
+export const NFTAddress =  "";
+export const  MarketplaceAddress=  "";
+export const DAOAddress =  "";
 
 Step 4
 #install dependencies on frontend again 
@@ -103,3 +100,4 @@ Potential Improvement:
 3. Restrict access or adding condition to mint nft for proposal creation and voting rights.
 4. Check NFT market availability before purchase
 5. Use proxy for storing data and implement upgradeable contract.
+</pre>
