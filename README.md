@@ -9,7 +9,7 @@ Architecture use:
 3. solidity 0.8.28
 
 Steps 1:
-#install dependencies as denoted in package.json
+#install dependencies as denoted in package.json\n
 npm i
 
 Step 2 Option 1
