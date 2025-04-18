@@ -63,18 +63,7 @@ Step 7
 npm run build
 npm run export
 
-Step 8 
-#Proof your learning effort to others
-1. Go to Github and create a new repository here - https://github.com/new
-2. After your repository has been created, copy the link next to Quick Setup that looks something like https://github.com/…/…git or git@github.com:…/…git
-3. In your Terminal, while pointing to the dao-to-buy-nft parent directory, type git init and then git remote add origin <URL FROM ABOVE>
-4. Change your branch to main by typing git branch -M main
-5. Type git add . to add everything you did into staging - so it gets pushed to Github with the next commit
-Please make sure if your .env is not upload to github as it contain private key. Check out how .gitignore works.
-6. Type git commit -m "complete cryptodevs dao project" to attach a message describing your commit
-7. Type git push -u origin main to push the changes to Github
-
-Step 9 
+Step 8
 #how to build everything from ground up
 1. Open new folder
 2. Create nodejs project, npm init -y
