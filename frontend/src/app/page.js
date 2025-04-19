@@ -87,6 +87,7 @@ export default function Home() {
             const tx = await contractDAO.createProposal(fakeNftTokenId);
             await tx.wait();
             setNumOfProposalsInDAO(numOfProposalsInDAO+BigInt(1));
+            setSelectedTab("View Proposals")
         } catch (error) {
             console.error(error);
             window.alert(error);
@@ -128,14 +129,21 @@ export default function Home() {
             window.alert(error);
         }
     }
+    // fetch all proposals in the DAO after specific amount of time 
+    async function fetchAllProposalsWithDelay() {
+        setTimeout(async () => {
+            await fetchAllProposals();
+        }, 5000);
+    }
+
+
     // Function to vote YAY or NAY on a proposal
     async function voteForProposal(proposalId, vote) {
         setLoading(true);
         try {
             const tx = await contractDAO.voteOnProposal(proposalId, vote === "YAY" ? 0 : 1);
             await tx.wait();
-            setSelectedTab("Create Proposals")
-            setSelectedTab("View Proposals")
+            fetchAllProposalsWithDelay();
         } catch (error) {
             console.error(error);
             window.alert(error);
@@ -148,8 +156,7 @@ export default function Home() {
         try {
             const tx = await contractDAO.executeProposal(proposalId);
             await tx.wait();
-            setSelectedTab("Create Proposals")
-            setSelectedTab("View Proposals")
+            fetchAllProposalsWithDelay();
         } catch (error) {
             console.error(error);
             window.alert(error);
@@ -195,7 +202,7 @@ export default function Home() {
         } else if (nftBalanceOfUser === 0) {
             return (
             <div className={styles.description}>
-                You do not own any CryptoDevs NFTs. <br />
+                You do not own any Voting rights. <br />
                 <b>You cannot create or vote on proposals</b>
             </div>
             );
