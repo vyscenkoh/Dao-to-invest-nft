@@ -89,4 +89,5 @@ Potential Improvement:
 3. Restrict access or adding condition to mint nft for proposal creation and voting rights.
 4. Check NFT market availability before purchase
 5. Use proxy for storing data and implement upgradeable contract.
+6. Connect Wagmi for all the wallet connection
 </pre>
