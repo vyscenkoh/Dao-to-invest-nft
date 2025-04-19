@@ -1,4 +1,7 @@
 "use client"
+
+import { useAccount, useBalance } from 'wagmi';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Image from "next/image";
 import styles from "./page.module.css";
 import Head from "next/head";
@@ -13,9 +16,9 @@ import {
   DAOABI,
 } from "@/constants";
 export default function Home() {
-    const provider = useRef(null);
-    const signer = useRef(null);
-    const [account, setAccount] = useState(null);
+  //const provider = useRef(null);
+    //const signer = useRef(null);
+    const {address, isConnected} = useAccount();
     const [contractDAO, setContractDAO] = useState(null);
     const [contractNFT, setContractNFT] = useState(null);
     const [contractMarket, setContractMarket] = useState(null);
@@ -26,46 +29,27 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const [proposals, setProposals] = useState([]);
     const [fakeNftTokenId, setFakeNftTokenId] = useState("");
+    const [donationValue, setDonationValue] = useState("");
     const [selectedTab, setSelectedTab] = useState(""); 
     const [isMounted, setIsMounted] = useState(false);
     
 
-    const connectWallet = async () => {
-        if (!window.ethereum) {
-          alert("Please install MetaMask!");
-          return;
-        }
+    
+    //const { address, isConnected } = useAccount();
+    //const { chain } = useNetwork();
+    const { data: balance } = useBalance({ address });
 
-        provider.current = new ethers.BrowserProvider(window.ethereum);
-        const accounts= await provider.current.send('eth_requestAccounts',[]);
-        setAccount(accounts[0]);
-        signer.current = await provider.current.getSigner();
-        const contractInstance1 = new ethers.Contract(DAOAddress, DAOABI, signer.current);
-        const contractInstance2 = new ethers.Contract(NFTAddress, NFTABI, signer.current);
-        const contractInstance3 = new ethers.Contract(MarketplaceAddress, MarketplaceABI, signer.current);
-        setContractDAO(contractInstance1);
-        setContractNFT(contractInstance2);
-        setContractMarket(contractInstance3);
-        const tx = await contractInstance1.owner();
-        setDaoOwner(tx);
-        const tx1 = await contractInstance1.runner.provider.getBalance(DAOAddress);
-        setDaoBalance(tx1);
-        const tx2 = await contractInstance1.numProposals();
-        setNumOfProposalsInDAO(tx2);
-        const tx3 = await contractInstance2.balanceOf(accounts[0]);
-        setNftBalanceOfUser(tx3);
-    };
-    if(typeof window!=="undefined")
-    window.ethereum.on("accountsChanged", async (accounts) => {
-        if (accounts.length === 0) {
-            alert("Please connect to MetaMask.");
-        } else {
-            setAccount(accounts[0]);
-            provider.current = new ethers.BrowserProvider(window.ethereum);
-            signer.current = await provider.current.getSigner();
-            const contractInstance1 = new ethers.Contract(DAOAddress, DAOABI, signer.current);
-            const contractInstance2 = new ethers.Contract(NFTAddress, NFTABI, signer.current);
-            const contractInstance3 = new ethers.Contract(MarketplaceAddress, MarketplaceABI, signer.current);
+    const [signer, setSigner] = useState(null);
+    //const [contractResult, setContractResult] = useState(null);
+    useEffect(() => {
+        const updateSigner = async () => {
+            if (typeof window !== 'undefined' && window.ethereum && isConnected) {
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const s = await provider.getSigner();
+            setSigner(s);
+            const contractInstance1 = new ethers.Contract(DAOAddress, DAOABI, s);
+            const contractInstance2 = new ethers.Contract(NFTAddress, NFTABI, s);
+            const contractInstance3 = new ethers.Contract(MarketplaceAddress, MarketplaceABI, s);
             setContractDAO(contractInstance1);
             setContractNFT(contractInstance2);
             setContractMarket(contractInstance3);
@@ -75,12 +59,13 @@ export default function Home() {
             setDaoBalance(tx1);
             const tx2 = await contractInstance1.numProposals();
             setNumOfProposalsInDAO(tx2);
-            const tx3 = await contractInstance2.balanceOf(accounts[0]);
+            const tx3 = await contractInstance2.balanceOf(address);
             setNftBalanceOfUser(tx3);
-        }
-    }); 
 
-      // Function to make a createProposal transaction in the DAO
+            }
+        };
+        updateSigner();
+    }, [address, isConnected]);
     async function createProposal() {
         setLoading(true);
         try {
@@ -173,11 +158,27 @@ export default function Home() {
             setDaoBalance(0);
         } catch (error) {
             console.error(error);
-            window.alert(error);
+            window.alert("Owner only");
         }
         setLoading(false);
     }
     
+    // Donate to DAO
+    async function donate() {
+        setLoading(true);
+        try {
+            const tx = await signer.sendTransaction({
+                to: DAOAddress,
+                value: ethers.parseEther(donationValue)
+              });
+            await tx.wait();
+            setDaoBalance(daoBalance+BigInt(ethers.parseEther(donationValue)));
+        } catch (error) {
+            console.error(error);
+            window.alert("Transcation cancelled");
+        }
+        setLoading(false);
+    }
     // Generate free member ticket
     async function mintNFT() {
         setLoading(true);
@@ -187,7 +188,7 @@ export default function Home() {
             setNftBalanceOfUser(nftBalanceOfUser+BigInt(1));
         } catch (error) {
             console.error(error);
-            window.alert(error);
+            window.alert("Transcation cancelled");
         }
         setLoading(false);
     }
@@ -295,13 +296,12 @@ export default function Home() {
 
     if (!isMounted) return null;
 
-    if (account==null||account==undefined)
+    if (!isConnected )
     return (
       <div className={styles.main}>
         <div className={styles.flex}>
-        <button
-              className={styles.button}
-              onClick={connectWallet}>Connect MetaMask</button>
+          <h1>Web3 App with RainbowKit</h1>
+          <ConnectButton />
         </div>
         </div>
     );
@@ -317,6 +317,7 @@ export default function Home() {
     return (
           <div className={styles.className}>
       <Head>
+      <w3m-button />
         <title> NFT INVESTOR DAO </title>
         <meta name="description" content="NFT owning Decentralized Organization" />
         <link rel="icon" href="/favicon.ico" />
@@ -336,6 +337,17 @@ export default function Home() {
             <br/>
             Total Number of Proposals: {numOfProposalsInDAO}
           </div>
+          <div className={styles.container}>
+                <label>Donation Amount: </label>
+                <input
+                placeholder="0"
+                type="number"
+                onChange={(e) => setDonationValue(e.target.value)}
+                />
+                <button
+              className={styles.button}
+              onClick={donate}>Donate to DAO</button>
+            </div>
           <div className={styles.flex}>
           <button
               className={styles.button}
@@ -349,7 +361,7 @@ export default function Home() {
           </div>
           {renderTabs()}
           {/* Display additional withdraw button if connected wallet is owner */}
-          {account &&daoOwner && account.toLowerCase() === daoOwner.toLowerCase() ? (
+          {address &&daoOwner && address.toLowerCase() === daoOwner.toLowerCase() ? (
             <div className={styles.flex}>
               {loading ? (
                 <button className={styles.button}>Loading...</button>

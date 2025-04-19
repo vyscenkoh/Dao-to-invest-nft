@@ -11,7 +11,7 @@ async function main(){
 	const market = await Market.deploy();
 	await market.waitForDeployment();
 	const Dao = await ethers.getContractFactory("DAOtobuyNFT");
-	const dao = await Dao.deploy(await market.getAddress(),await nft.getAddress(),{value:ethers.parseEther("0.01")});
+	const dao = await Dao.deploy(await market.getAddress(),await nft.getAddress());//,{value:ethers.parseEther("0.01")});
 	await dao.waitForDeployment();
 	console.log(`DAOMember deployed to address: ${await nft.getAddress()}`);
 	console.log(`FakeNFTMarketplace deployed to address: ${await market.getAddress()}`);

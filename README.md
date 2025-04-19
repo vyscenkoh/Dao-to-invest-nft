@@ -1,12 +1,18 @@
 # Dao-to-invest-nft
 
 Forewords:
-Most tutorial on web3 fail to provide working example. This is become latest node js does not compatible with old hardhat, latest hardhat and etherv6 had change the coding structure, and it is not the best practice to use deprecated library. Hopefully this can fill the gap with some of the assumed knowledge missing from tutorial.
+The latest node js does not compatible with old hardhat, latest hardhat and etherv6 had change the coding structure, and it is not the best practice to use deprecated library. Hopefully this can fill the gap with some of the assumed knowledge missing from some tutorial.
 
-Architecture use:
-1. etherv6js (shorter code and easier)
-2. hardhat 2.23 (foundry is harder to use, remix is just too manual)
+Library use:
+1. nextjs 15.3  (alternative: vite, ..)
+2. hardhat 2.23 (alternative: foundry, remix, ..)
 3. solidity 0.8.28
+4. wagmi 2.14 (alternative: window.ethereum, ..)
+5. rainbowkit 2.2 (alternative: web3modal, ..)
+6. viem 2.27
+7. react 19.0
+8. openzeppelin 5.3
+
 <pre>
 Steps 1:
 #install dependencies as denoted in package.json
@@ -63,13 +69,24 @@ Step 7
 npm run build
 npm run export
 
-Step 8
+Step 8 
+#Proof your learning effort to others
+1. Go to Github and create a new repository here - https://github.com/new
+2. After your repository has been created, copy the link next to Quick Setup that looks something like https://github.com/…/…git or git@github.com:…/…git
+3. In your Terminal, while pointing to the dao-to-buy-nft parent directory, type git init and then git remote add origin <URL FROM ABOVE>
+4. Change your branch to main by typing git branch -M main
+5. Type git add . to add everything you did into staging - so it gets pushed to Github with the next commit
+Please make sure if your .env is not upload to github as it contain private key. Check out how .gitignore works.
+6. Type git commit -m "complete cryptodevs dao project" to attach a message describing your commit
+7. Type git push -u origin main to push the changes to Github
+
+Step 9 
 #how to build everything from ground up
 1. Open new folder
 2. Create nodejs project, npm init -y
 3. Install hardhat, npm i hardhat
 4. Create hardhat sample project structure, npx hardhat init
-5. For libraries, npm i  <package u found npmjs.org>
+5. For libraries, npm i  <package u found on npmjs.org>
 6. Contracts can be found contracts/xyz.sol
 7. Create script folder, create scripts/deploy.js, this is where u deploy your contract automatically, this is better than manually click on remix.org UI for every contract changes.
 8. You can check the test/Lock.js to see how script test is done for smartcontract, npx hardhat test to run each script in that folder
@@ -89,5 +106,5 @@ Potential Improvement:
 3. Restrict access or adding condition to mint nft for proposal creation and voting rights.
 4. Check NFT market availability before purchase
 5. Use proxy for storing data and implement upgradeable contract.
-6. Connect Wagmi for all the wallet connection
+6. Better GUI
 </pre>
